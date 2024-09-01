@@ -1,0 +1,55 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="../../styles/styles.css">
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+    <table id="users-table" border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Users will be loaded here -->
+        </tbody>
+    </table>
+
+    <script>
+        async function loadUsers() {
+            const response = await fetch('http://127.0.0.1:4001/admin/user',{
+                credentials:"include"
+            });
+            const users = (await response.json())?.payload;
+            if (!users) {
+                alert('Failed to load users');
+                window.location.href = '../index.html';
+                return;
+            }
+            const tbody = document.getElementById('users-table').getElementsByTagName('tbody')[0];
+            tbody.innerHTML = '';
+            users.forEach(user => {
+                const row = tbody.insertRow();
+                row.insertCell(0).innerText = user.id;
+                row.insertCell(1).innerText = user.email;
+                const actionsCell = row.insertCell(2);
+                //Edit Button, creation, implementation & functionality. 
+                const editButton = document.createElement('button');
+                editButton.innerText = 'Edit';
+                editButton.onclick = () => {
+                    window.location.href = `./user.html?user_id=${user.id}`;
+                };
+                actionsCell.appendChild(editButton);
+            });
+        }
+
+        loadUsers();
+    </script>
+</body>
+</html>
